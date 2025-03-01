@@ -1,0 +1,130 @@
+﻿<Window x:Class="MVVM_LunaFlow.Views.DiaryView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MVVM_LunaFlow.Views"
+        xmlns:vm="clr-namespace:MVVM_LunaFlow.ViewModels"
+    mc:Ignorable="d"
+        Title="DiaryView" Height="800" Width="400">
+    <Window.DataContext>
+        <vm:DiaryViewModel/>
+    </Window.DataContext>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!--일반적인 기록 섹션-->
+        <GroupBox Header="일반 기록" Margin="5" BorderThickness="3" Grid.ColumnSpan="2">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!--배란기 입력-->
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="배란 기간" Margin="5"/>
+                <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
+                    <DatePicker Width="100" Margin="5" SelectedDate="{Binding OvulationStartDate}"/>
+                    <TextBlock Text="~" FontSize="20"/>
+                    <DatePicker Width="100" Margin="5" SelectedDate="{Binding OvulationEndDate}"/>
+                </StackPanel>
+
+                <!--배란메모 입력-->
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="배란 메모" Margin="5"/>
+                <TextBox Grid.Row="1" Grid.Column="1" Height="100"
+                          TextWrapping="Wrap" Text="{Binding OvulationMemo}"/>
+
+                <!--생리기 입력-->
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="생리 기간" Margin="5"/>
+                <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
+                    <DatePicker Width="100" Margin="5" SelectedDate="{Binding PeriodStartDate}"/>
+                    <TextBlock Text="~" FontSize="20"/>
+                    <DatePicker Width="100" Margin="5" SelectedDate="{Binding PeriodEndDate}"/>
+                </StackPanel>
+
+                <!--생리메모 입력-->
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="생리 메모" Margin="5"/>
+                <TextBox Grid.Row="3" Grid.Column="1" Height="100" Text="{Binding PeriodMemo}"
+                          TextWrapping="Wrap"/>
+            </Grid>
+        </GroupBox>
+
+        <!-- 날짜별 기록 섹션 -->
+        <GroupBox Grid.Column="1" Header="날짜별 기록" Margin="5" BorderThickness="3" Visibility="Hidden">
+            <Grid HorizontalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <!--Calendar UI-->
+                <Calendar Grid.ColumnSpan="2" HorizontalAlignment="Center" SelectedDate="{Binding SelectedDate}">
+                    <Calendar.LayoutTransform>
+                        <ScaleTransform ScaleX="1.5" ScaleY="1.5"/>
+                    </Calendar.LayoutTransform>
+                </Calendar>
+                
+                <!--몸상태, 기분, 체온-->
+                <TextBlock Grid.Row="1" Text="몸상태" Margin="5"/>
+                <TextBox Grid.Row="1" Grid.Column="1" Width="200" Margin="5" Text="{Binding BodyCondition}"/>
+
+                <TextBlock Grid.Row="2" Text="기분" Margin="5"/>
+                <TextBox Grid.Row="2" Grid.Column="1" Width="200" Margin="5" Text="{Binding Mood}"/>
+
+                <TextBlock Grid.Row="3" Text="체온" Margin="5"/>
+                <TextBox Grid.Row="3" Grid.Column="1" Width="200" Margin="5" Text="{Binding Temperature}"/>
+            </Grid>
+        </GroupBox>
+
+        <!-- 추가 버튼 -->
+        <Button Grid.Row="1" Grid.ColumnSpan="2" Content="Add Record" Command="{Binding AddRecordCommand}" 
+                HorizontalAlignment="Center" VerticalAlignment="Bottom" 
+                Width="220" Height="40" Margin="10" Background="#FFEC8FC3"
+                Foreground="White" BorderBrush="Transparent" FontWeight="Bold" />
+        
+        <!--기록 표시-->
+        <GroupBox Header="저장된 기록" Grid.Row="2" Grid.ColumnSpan="2" BorderThickness="3">
+            <ListBox Grid.Row="3" Grid.ColumnSpan="2" ItemsSource="{Binding GeneralRecords}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="배란: "/>
+                            <TextBlock Text="{Binding OvulationStartDate, StringFormat='MM-dd' }"/>
+                            <TextBlock Text=" ~ "/>
+                            <TextBlock Text="{Binding OvulationEndDate, StringFormat='MM-dd'}"/>
+                            <TextBlock Text=" ("/>
+                            <TextBlock Text="{Binding OvulationMemo}"/>
+                            <TextBlock Text="), 생리: "/>
+                            <TextBlock Text="{Binding PeriodStartDate, StringFormat='MM-dd'}"/>
+                            <TextBlock Text=" ~ "/>
+                            <TextBlock Text="{Binding PeriodEndDate, StringFormat='MM-dd'}"/>
+                            <TextBlock Text=" ("/>
+                            <TextBlock Text="{Binding PeriodMemo}"/>
+                            <TextBlock Text=") "/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </GroupBox>        
+    </Grid>
+</Window>
